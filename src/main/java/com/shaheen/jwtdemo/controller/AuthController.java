@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotNull;
+
 @RestController
 @RequestMapping(value = "/api/v1/auth")
 public class AuthController {
@@ -26,7 +28,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping(value = {"", "/"})
-    public JwtResponse signIn(@RequestBody SignInRequest signInRequest) {
+    public JwtResponse signIn(@RequestBody @NotNull SignInRequest signInRequest) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         UserDetails userDetails = userService.loadUserByUsername(signInRequest.getUsername());

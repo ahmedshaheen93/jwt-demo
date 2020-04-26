@@ -1,8 +1,15 @@
 package com.shaheen.jwtdemo.model;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 public class SignInRequest {
-    private String username ;
-    private String password;
+    @NotEmpty(message = "you should enter username")
+    @NotNull(message = "username can't be null ")
+    private String username = "";
+    @NotEmpty(message = "you should enter password")
+    @NotNull(message = "password can't be null ")
+    private String password = "";
 
     public SignInRequest() {
     }
