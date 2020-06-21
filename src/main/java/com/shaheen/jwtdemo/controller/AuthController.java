@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
+import java.security.Principal;
 
 @RestController
-@RequestMapping(value = "/api/v1/auth")
+@RequestMapping(value = "/api/v1")
 public class AuthController {
     @Autowired
     private TokenUtil tokenUtil;
@@ -27,13 +28,18 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @PostMapping(value = {"", "/"})
+    @PostMapping(value = "/auth")
     public JwtResponse signIn(@RequestBody @NotNull SignInRequest signInRequest) {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         UserDetails userDetails = userService.loadUserByUsername(signInRequest.getUsername());
         String token = tokenUtil.generateToken(userDetails);
         return new JwtResponse(token);
-
+    }
+    @PostMapping(value = "/refresh")
+    public JwtResponse refresh(Principal principal) {
+        UserDetails userDetails = userService.loadUserByUsername(principal.getName());
+        String token = tokenUtil.generateToken(userDetails);
+        return new JwtResponse(token);
     }
 }
